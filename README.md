@@ -13,13 +13,7 @@ A professional FastAPI backend for AI-powered healthcare document processing and
 
 ## Architecture Backend
 
-app/
-── api/v1/endpoints/     # API endpoint handlers
-── core/                 # Core configuration and utilities
-── models/              # Pydantic models and schemas
-── services/            # Business logic services
-── main.py             # FastAPI application entry point
-
+<img width="596" height="150" alt="image" src="https://github.com/user-attachments/assets/38c8b66e-5ad5-473f-9e40-d7cbaee1a16c" />
 
 ## Setup
 
