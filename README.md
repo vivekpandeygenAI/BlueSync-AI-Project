@@ -11,47 +11,28 @@ A professional FastAPI backend for AI-powered healthcare document processing and
 - **BigQuery Integration**: Store and manage data in Google Cloud BigQuery
 - **Professional Architecture**: Clean separation of concerns with services, models, and API layers
 
-## Architecture
+## Architecture Backend
 
-\`\`\`
-app/
-├── api/v1/endpoints/     # API endpoint handlers
-├── core/                 # Core configuration and utilities
-├── models/              # Pydantic models and schemas
-├── services/            # Business logic services
-└── main.py             # FastAPI application entry point
-\`\`\`
+<img width="596" height="150" alt="image" src="https://github.com/user-attachments/assets/38c8b66e-5ad5-473f-9e40-d7cbaee1a16c" />
 
 ## Setup
 
 1. **Clone and install dependencies**:
-   \`\`\`bash
+   
    pip install -r requirements.txt
-   \`\`\`
+  
 
-2. **Configure environment**:
-   \`\`\`bash
-   cp .env.example .env
-   # Edit .env with your configuration
-   \`\`\`
-
-3. **Run the application**:
-   \`\`\`bash
+2. **Run the application**:
+   
    uvicorn main:app --reload
-   \`\`\`
+  
 
 4. **Using Docker**:
-   \`\`\`bash
+   
    docker-compose up --build
-   \`\`\`
+  
 
 ## API Documentation
-
-Once running, visit:
-- API Documentation: http://localhost:8000/docs
-- Alternative docs: http://localhost:8000/redoc
-
-## Key Endpoints
 
 - `POST /api/v1/files/upload` - Upload documents
 - `POST /api/v1/requirements/{file_id}/extract` - Extract requirements
