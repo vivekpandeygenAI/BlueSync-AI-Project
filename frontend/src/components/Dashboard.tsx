@@ -11,11 +11,12 @@ import {
 } from 'lucide-react';
 import { apiService } from '../services/api';
 
+type FileOption = { file_id: string; filename: string; status?: string; uploaded_at?: string };
+
 export const Dashboard: React.FC = () => {
   const [totalFiles, setTotalFiles] = useState('0');
   const [totalRequirements, setTotalRequirements] = useState('0');
   const [totalTestCases, setTotalTestCases] = useState('0');
-  const [complianceScore, setComplianceScore] = useState('0%');
   const [recentActivities, setRecentActivities] = useState<any[]>([]);
 
   useEffect(() => {
@@ -24,54 +25,29 @@ export const Dashboard: React.FC = () => {
         const files = await apiService.getUploadedFiles();
         setTotalFiles(files.length.toLocaleString());
 
-        let requirementsCount = 0;
-        let testCasesCount = 0;
-        let complianceSum = 0;
-        let complianceCount = 0;
-        for (const file of files) {
-          // Requirements
-          const reqs = await apiService.getRequirements(file.file_id);
-          requirementsCount += reqs.length;
+        // Efficiently fetch requirements and test cases in parallel
+        const [requirementsResults, testCasesResults] = await Promise.all([
+          Promise.all(files.map((file: FileOption) => apiService.getRequirements(file.file_id))),
+          Promise.all(files.map((file: FileOption) => apiService.getTestCasesByFile(file.file_id)))
+        ]);
 
-          // Test Cases: count by tc_id
-          let tcs = [];
-          try {
-            const tcRes = await apiService.getTestCasesByFile(file.file_id);
-            // tcRes.requirements is an array, each with test_cases array
-            if (tcRes && tcRes.requirements) {
-              for (const req of tcRes.requirements) {
-                if (req.test_cases && Array.isArray(req.test_cases)) {
-                  testCasesCount += req.test_cases.filter((tc: any) => tc.tc_id).length;
-                }
+        const requirementsCount = requirementsResults.reduce((sum, reqs) => sum + (Array.isArray(reqs) ? reqs.length : 0), 0);
+        const testCasesCount = testCasesResults.reduce((sum, tcRes) => {
+          if (tcRes && tcRes.requirements) {
+            return sum + tcRes.requirements.reduce((tcSum: number, req: any) => {
+              if (req.test_cases && Array.isArray(req.test_cases)) {
+                return tcSum + req.test_cases.filter((tc: any) => tc.tc_id).length;
               }
-            }
-          } catch {
-            // If not present, generate
-            await apiService.generateTestCasesForFile(file.file_id);
-            const tcRes = await apiService.getTestCasesByFile(file.file_id);
-            if (tcRes && tcRes.requirements) {
-              for (const req of tcRes.requirements) {
-                if (req.test_cases && Array.isArray(req.test_cases)) {
-                  testCasesCount += req.test_cases.filter((tc: any) => tc.tc_id).length;
-                }
-              }
-            }
+              return tcSum;
+            }, 0);
           }
+          return sum;
+        }, 0);
 
-          // Compliance Score
-          try {
-            const metrics = await apiService.getComplianceMetrics(file.file_id);
-            if (metrics && typeof metrics.score === 'number') {
-              complianceSum += metrics.score;
-              complianceCount++;
-            }
-          } catch {}
-        }
         setTotalRequirements(requirementsCount.toLocaleString());
         setTotalTestCases(testCasesCount.toLocaleString());
-        setComplianceScore(complianceCount > 0 ? `${(complianceSum / complianceCount).toFixed(1)}%` : '0%');
 
-        // Recent Activity: show filename and status
+        // Efficient Recent Activity: only use file metadata, no extra API calls
         const activities = files.map((file: any) => ({
           action: file.filename,
           project: file.status || '',
@@ -85,6 +61,7 @@ export const Dashboard: React.FC = () => {
     };
     fetchData();
   }, []);
+
   const stats = [
     {
       label: 'Files Uploaded',
@@ -109,18 +86,9 @@ export const Dashboard: React.FC = () => {
       trend: 'up',
       icon: Zap,
       color: 'teal'
-    },
-    {
-      label: 'Compliance Score',
-      value: complianceScore,
-      change: '+2.1%',
-      trend: 'up',
-      icon: Shield,
-      color: 'orange'
     }
+    // Compliance Score card removed
   ];
-
-  // ...existing code...
 
   return (
     <div className="space-y-6">

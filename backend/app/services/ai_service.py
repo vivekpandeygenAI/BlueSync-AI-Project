@@ -104,18 +104,30 @@ class AIService:
     def _build_requirements_prompt(self, text_data: str) -> str:
         """Build prompt for requirements extraction"""
         return f"""
-You are an expert Business Analyst and Software Quality Assurance Engineer specializing in medical software (IEC 62304, FDA, HIPAA). Your task is to analyze the provided healthcare software document and extract a comprehensive list of functional and non-functional requirements.
+You are an expert Business Analyst and Software Quality Assurance Engineer specializing in medical software (IEC 62304, FDA, HIPAA). Your task is to analyze the provided healthcare software document and extract a comprehensive, detailed list of functional and non-functional requirements.
 
-Instructions:
-Scope & Granularity: Extract only requirements that are atomic, testable, and significant. Each requirement must be substantial enough to serve as the basis for generating 4-5 distinct test cases. Avoid trivial or overly broad statements. Focus on requirements that define specific system behaviors, constraints, or capabilities.
+#Instructions:
 
-Requirement Format: For each requirement you identify, output it in the following structured JSON format:
+##Scope & Granularity:
+
+Extract only requirements that are atomic, testable, and significant.
+Each requirement must be substantial enough to support at least 4-5 distinct, non-overlapping test cases.
+Avoid trivial or overly broad statements.
+Focus on requirements that define specific system behaviors, constraints, or capabilities.
+
+##Requirement Description Depth:
+
+The "description" field must be thorough and detailed (minimum 5-7 sentences).
+Describe the expected behavior, preconditions, constraints, user/system interactions, failure conditions, and compliance considerations.
+Provide enough context so that a test designer could directly derive multiple test scenarios from the description without ambiguity.
+
+Requirement Format (JSON):
 {{
     "requirements": [
         {{
             "type": "Functional | Non-Functional | Regulatory",
             "title": "A concise, descriptive title for the requirement, ideally under 10 words",
-            "description": "A clear, concise, and complete sentence describing the requirement, preferably starting with 'The system shall...'",
+            "description": "A detailed description of the requirement, clearly outlining the expected behavior or constraint",
             "source": "The specific section or page number from the document where this requirement was found",
             "category": "Data Acquisition | Security | Interoperability | Usability | Analytics | Compliance | etc.",
             "priority": "High | Medium | Low"
