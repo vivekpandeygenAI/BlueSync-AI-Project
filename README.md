@@ -1,4 +1,4 @@
-# Healthcare AI Backend
+# Automating Test Case Generation
 
 A professional FastAPI backend for AI-powered healthcare document processing and test case generation.
 
@@ -12,26 +12,52 @@ A professional FastAPI backend for AI-powered healthcare document processing and
 - **Professional Architecture**: Clean separation of concerns with services, models, and API layers
 
 ## Architecture Backend
+```
+backend/
+├── app/
+│ ├── api/v1/endpoints/ # API endpoint handlers
+│ ├── core/ # Core configuration and utilities
+│ ├── models/ # Pydantic models and schemas
+│ ├── services/ # Business logic services
+│ └── main.py # FastAPI application entry point
+│
+├── docker-compose.yml # Docker Compose setup
+├── Dockerfile # Docker image build configuration
+├── main.py # Optional root entry point
+├── requirements.txt # Python dependencies
+├── key.json # Service account / key file
+└── .env # Environment variables
+```
 
-<img width="596" height="150" alt="image" src="https://github.com/user-attachments/assets/38c8b66e-5ad5-473f-9e40-d7cbaee1a16c" />
-
-## Setup
-
-1. **Clone and install dependencies**:
+## Setup Backend Using Docker
+```bash
+cd backend
+```
+```bash
+docker-compose up --build
+```
+## Setup Frontend 
+```bash
+cd frontend
+```
+```bash
+npm install
+```
+```bash
+npm start
+```
+```
+frontend/
+├── src/
+│   ├── App.js - Main React component
+│   ├── App.tsx - TypeScript React component
+│   ├── App.css - Styling
+│   └── index.js - React entry point
+├── public/
+│   └── index.html - HTML template
+└── package.json - Dependencies and scripts
+```
    
-   pip install -r requirements.txt
-  
-
-2. **Run the application**:
-   
-   uvicorn main:app --reload
-  
-
-4. **Using Docker**:
-   
-   docker-compose up --build
-  
-
 ## API Documentation
 
 - `POST /api/v1/files/upload` - Upload documents
